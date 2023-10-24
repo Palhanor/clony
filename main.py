@@ -1,5 +1,3 @@
-# TODO: Ver como tratar arquivos triplicados...
-
 import os
 import hashlib
 
@@ -11,11 +9,11 @@ class Clony:
         self.dir_list = self._get_all_dirs(self.origin, [])
         self.file_list = self._get_all_files()
 
-    def _get_all_dirs(self, origin, dir_list):
-        child_directories = [d for d in os.listdir(origin)
-                             if os.path.isdir(os.path.join(origin, d))]
+    def _get_all_dirs(self, current_dir, dir_list):
+        child_directories = [d for d in os.listdir(current_dir)
+                             if os.path.isdir(os.path.join(current_dir, d))]
         for directory in child_directories:
-            dir_list.append(os.path.join(origin, directory))
+            dir_list.append(os.path.join(current_dir, directory))
         while self.position < len(dir_list):
             self.position += 1
             self._get_all_dirs(dir_list[self.position-1], dir_list)
@@ -32,16 +30,16 @@ class Clony:
         return all_files
 
     def _list_files(self):
-        BUF_SIZE = 65536
+        BUF_SIZE = 65536  # bytes
         for file in self.file_list:
-            sha1 = hashlib.sha256()
+            sha256 = hashlib.sha256()
             with open(file, 'rb') as f:
                 while True:
                     data = f.read(BUF_SIZE)
                     if not data:
                         break
-                    sha1.update(data)
-            self.results.append({"path": file, "hash": sha1.hexdigest()})
+                    sha256.update(data)
+            self.results.append({"path": file, "hash": sha256.hexdigest()})
 
     def find_duplicate(self):
         self._list_files()
@@ -59,3 +57,5 @@ if __name__ == '__main__':
     [print(i) for i in clony.file_list]
     print("\nCÓPIAS ENCONTRADAS")
     clony.find_duplicate()
+
+    input("\nPressione qualquer tecla para finalizar o programa...")
