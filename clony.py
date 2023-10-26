@@ -43,7 +43,16 @@ class Clony:
 
     def find_duplicate(self):
         self._list_files()
+        print("\nCÓPIAS ENCONTRADAS:")
         for i, file1 in enumerate(self.results):
             for file2 in self.results[i + 1:]:
                 if file1["hash"] == file2["hash"]:
                     print(f"Hash: {file1['hash']}\n\t{file1['path']}\n\t{file2['path']}\n")
+
+    def list_dirs(self):
+        print("\nDIRETÓRIOS VASCULHADOS:")
+        [print(i) for i in self.dir_list]
+
+    def list_files(self):
+        print("\nARQUIVOS VERIFICADOS")
+        [print(i) for i in self.file_list]
