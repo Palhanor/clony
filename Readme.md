@@ -19,16 +19,19 @@ OBS: É importante salientar que para executar o `git clone` é preciso ter o Gi
 ## Estrutura Interna
 
 ### Atributos
-- `results`: Uma lista contendo todos os arquivos mapeados com a estrutura {path, hash}.
+- `results`: Um dicionário onde a chave é o hash gerado e o valor é uma lista com o(s) arquivo(s) originários.
+- `colision`: Uma lista com todos os hashes não únicos gerados pelo sistema.
 - `position`: Um valor inteiro que indica a posição do diretório que está sendo mapeado recursivamente.
 - `origin`: Diretório inicial a partir do qual todo o mapeamento de diretórios e arquivos é realizado.
+- `ignore`: Nomes dos diretórios e/ou arquivos que devem ser ignorados
 - `dir_list`: Lista contendo todos os diretórios e subdiretórios de dentro do diretório de origem.
 - `file_list`: Lista contendo todos os arquivos de todos os diretórios e subdiretórios de dentro do diretório de origem.
 
 ### Métodos
 - `_get_all_dirs(current_dir, dir_list)`: Recebe o diretório a ser listado e uma lista contendo todos os diretórios catalogados anteriormente. Atua de forma recursiva, identificando novos diretórios dentro do diretório atual e os insere na lista de diretórios mapeados, retornando a lista completa ao final do processo.
 - `_get_all_files()`: Utiliza a lista de diretórios mapeados para iterar sobre cada diretório, extraindo os arquivos presentes em cada um deles e, em seguida, retornando uma lista contendo todos os arquivos encontrados.
-- `_list_files()`: Itera sobre a lista de arquivos encontrados aplicando a função de hashing para obter o identificador de cada arquivo. É responsável por montar a lista final com os `results` e sua estrutura {path, hash}.
+- `_list_files()`: Itera sobre a lista de arquivos encontrados aplicando a função de hashing para obter o valor do checksum de cada um dos arquivos.
+- `_insert_file(checksum, file)`: Recebe o valor do checksum e o caminho do arquivo, e então verifica a colisão para fazer o armazenamento no `results` e o registro no `colisions`
 - `find_duplicate()`: É o único método público. Quando chamado, itera sobre a lista `results` para buscar elementos com o mesmo hash, indicando duplicação de arquivos. Torna-se seguro retornar o caminho de cada um dos arquivos com o mesmo hash.
 
 ## Detalhes Adicionais
@@ -38,7 +41,12 @@ OBS: É importante salientar que para executar o `git clone` é preciso ter o Gi
 - Arquivos triplicados não são exibidos de forma conjunta, mas sim em três pares de dois, o que é um problema a ser tratado no longo prazo.
 
 ## Próximas Etapas
-- [ ] Tratar a exibição de arquivos triplicados ou em maior número.
-- [ ] Permitir a visualização dos arquivos.
-- [ ] Tratar o possível estouro de memória.
+- [ ] Permitir a visualização dos arquivos (exigiria uma abordagem para cada formato).
+- [ ] Tratar o possível estouro de memória em caso de muitos diretórios e/ou arquivos.
 - [ ] Resolver o problema do limite de recursividade.
+- [ ] Adicionar uma GUI intuitiva para o usuário final.
+- [ ] Implementar um sistema de filtros (formato, tamanho, ignorar [nome, pasta]).
+- [ ] Controlar o que vai acontecer com as duplicatas.
+- [ ] Salvar um estado para agilizar o scan posterior da mesma pasta.
+- [ ] Gerar um relatório mais detalhado com metadados.
+- [ ] Integrar com sistemas de nuvem para fazer essa verificação (será possível?).
